@@ -1,0 +1,98 @@
+{
+  "cluster_name": "ESP32-DUCO-Cluster",
+  "total_miners": 9,
+  "duinocoin_username": "YOUR_USERNAME_HERE",
+  "wifi": {
+    "ssid": "YOUR_WIFI_SSID",
+    "password": "YOUR_WIFI_PASSWORD",
+    "channel": "auto",
+    "frequency": "2.4GHz"
+  },
+  "miners": [
+    {
+      "id": 1,
+      "rig_identifier": "ESP32-Alpha",
+      "description": "Primary miner",
+      "port": "/dev/ttyUSB0",
+      "expected_hashrate": "170-180 kH/s",
+      "cpu_frequency": "240MHz"
+    },
+    {
+      "id": 2,
+      "rig_identifier": "ESP32-Beta",
+      "description": "Secondary miner",
+      "port": "/dev/ttyUSB1",
+      "expected_hashrate": "170-180 kH/s",
+      "cpu_frequency": "240MHz"
+    },
+    {
+      "id": 3,
+      "rig_identifier": "ESP32-Gamma",
+      "description": "Tertiary miner",
+      "port": "/dev/ttyUSB2",
+      "expected_hashrate": "170-180 kH/s",
+      "cpu_frequency": "240MHz"
+    },
+    {
+      "id": 4,
+      "rig_identifier": "ESP32-Delta",
+      "description": "Miner 4",
+      "port": "/dev/ttyUSB3",
+      "expected_hashrate": "170-180 kH/s",
+      "cpu_frequency": "240MHz"
+    },
+    {
+      "id": 5,
+      "rig_identifier": "ESP32-Epsilon",
+      "description": "Miner 5",
+      "port": "/dev/ttyUSB4",
+      "expected_hashrate": "170-180 kH/s",
+      "cpu_frequency": "240MHz"
+    },
+    {
+      "id": 6,
+      "rig_identifier": "ESP32-Zeta",
+      "description": "Miner 6",
+      "port": "/dev/ttyUSB5",
+      "expected_hashrate": "170-180 kH/s",
+      "cpu_frequency": "240MHz"
+    },
+    {
+      "id": 7,
+      "rig_identifier": "ESP32-Eta",
+      "description": "Miner 7",
+      "port": "/dev/ttyUSB6",
+      "expected_hashrate": "170-180 kH/s",
+      "cpu_frequency": "240MHz"
+    },
+    {
+      "id": 8,
+      "rig_identifier": "ESP32-Theta",
+      "description": "Miner 8",
+      "port": "/dev/ttyUSB7",
+      "expected_hashrate": "170-180 kH/s",
+      "cpu_frequency": "240MHz"
+    },
+    {
+      "id": 9,
+      "rig_identifier": "ESP32-Iota",
+      "description": "Miner 9",
+      "port": "/dev/ttyUSB8",
+      "expected_hashrate": "170-180 kH/s",
+      "cpu_frequency": "240MHz"
+    }
+  ],
+  "cluster_stats": {
+    "total_expected_hashrate": "1530-1620 kH/s",
+    "total_power_consumption": "13.5W",
+    "expected_daily_earnings": "90 DUCO",
+    "expected_monthly_earnings": "2700 DUCO"
+  },
+  "notes": [
+    "Configure each miner with unique RIG_IDENTIFIER",
+    "Ensure WiFi is 2.4GHz (ESP32 doesn't support 5GHz)",
+    "Use quality USB cables and power supplies",
+    "Monitor temperature - consider heatsinks if needed",
+    "Each ESP32 web dashboard accessible at http://ESP32_IP:80"
+  ]
+}
