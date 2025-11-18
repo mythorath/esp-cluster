@@ -1,57 +1,72 @@
-# ESP32 Cluster - DuinoCoin Mining & Distributed Computing
+# ESP32 Flexible Compute Cluster
 
-Mine **DuinoCoin** or run distributed computations on a 9-node ESP32 cluster!
+A **9-node ESP32 distributed computing cluster** that can run parallel algorithms, mine DuinoCoin, or both!
 
 ![Cluster Status](https://img.shields.io/badge/Status-Active-green)
 ![Nodes](https://img.shields.io/badge/Nodes-9x_ESP32-blue)
-![Hashrate](https://img.shields.io/badge/Hashrate-1.5_MH/s-orange)
-![Power](https://img.shields.io/badge/Power-13.5W-yellow)
+![Platform](https://img.shields.io/badge/Platform-MicroPython-blue)
+![Framework](https://img.shields.io/badge/Framework-Broccoli-purple)
 
 ## What Is This?
 
-This is a **9-node ESP32 cluster** optimized for:
-- **🪙 DuinoCoin Mining** (Primary use - ~90 DUCO/day)
-- **💻 Distributed Computing** (Alternative - parallel processing)
+This is a **flexible distributed computing cluster** built from 9x ESP32 microcontrollers. It's a general-purpose compute platform that can:
+
+- **💻 Run Distributed Computations** (Primary use - parallel algorithms, MapReduce, simulations)
+- **⛏️ Mine DuinoCoin** (Optional - when you want crypto mining)
+- **🔄 Switch Between Tasks** (Dynamically change workloads)
+- **📡 Deploy Code Wirelessly** (Update tasks without re-flashing)
+
+**Think of it as:** A mini cloud computing platform you control, not dedicated mining hardware!
 
 Built from:
 - **9x ESP32 DevKit v1** boards (dual-core @ 240MHz each)
 - **1x KickPi K2B** (coordinator running Linux)
-- **WiFi networking** (MQTT for distributed computing, direct pool connection for mining)
+- **Broccoli framework** (distributed task queue system)
+- **MicroPython** (flexible programming platform)
 
-## Two Modes of Operation
+## Cluster Capabilities
 
-### Mode 1: DuinoCoin Mining ⛏️ (Recommended)
+### Primary: Distributed Computing 💻
 
-**What is DuinoCoin?** A cryptocurrency designed specifically for low-power devices like ESP32s!
+A **flexible compute platform** using the Broccoli framework:
+- **Monte Carlo simulations** - Parallel random sampling
+- **MapReduce operations** - Process large datasets
+- **Prime searching** - Distributed number crunching
+- **Parallel algorithms** - Any embarrassingly parallel problem
+- **Custom tasks** - Deploy your own Python code wirelessly
 
-**Your Cluster Stats:**
-- **Hashrate:** 1.53-1.62 MH/s (170-180 kH/s per ESP32)
+→ **See [QUICKSTART.md](QUICKSTART.md) for setup**
+→ **See [CLUSTER_USAGE.md](CLUSTER_USAGE.md) for usage guide**
+
+### Optional: DuinoCoin Mining ⛏️
+
+The cluster **CAN mine DuinoCoin** as one of many possible tasks:
+
+**Flexible Cluster (MicroPython):**
+- **Hashrate:** ~450-630 kH/s total (~50-70 kH/s per ESP32)
+- **Daily Earnings:** ~30-50 DUCO
+- **Advantage:** Switch between mining and computing anytime
+- **Trade-off:** Lower hashrate than dedicated miners
+
+**Dedicated Miners (Arduino C++):**
+- **Hashrate:** 1.53-1.62 MH/s total (170-180 kH/s per ESP32)
 - **Daily Earnings:** ~90 DUCO
-- **Power Usage:** ~13.5W total
-- **Setup Time:** ~2 hours
+- **Advantage:** Maximum performance
+- **Trade-off:** Can ONLY mine, no flexibility
 
-→ **See [duinocoin/QUICKSTART_DUINOCOIN.md](duinocoin/QUICKSTART_DUINOCOIN.md) to start mining!**
+→ **Flexible mining:** See [CLUSTER_USAGE.md](CLUSTER_USAGE.md)
+→ **Dedicated mining:** See [duinocoin/QUICKSTART_DUINOCOIN.md](duinocoin/QUICKSTART_DUINOCOIN.md)
 
-### Mode 2: Distributed Computing 💻
-
-Use the **Broccoli framework** for parallel processing tasks:
-- Monte Carlo simulations
-- MapReduce operations
-- Prime searching
-- Parallel algorithms
-
-→ **See [QUICKSTART.md](QUICKSTART.md) for distributed computing setup**
-
-**Note:** ESP32s cannot run Linux - they're microcontrollers running MicroPython/Arduino code. The K2B runs Linux and coordinates the cluster.
+**Choose based on your goal:** Flexibility or maximum mining performance.
 
 ## Architecture
 
 ```
 ┌──────────────────────────────────────────────┐
-│         KickPi K2B (Master Node)             │
+│         KickPi K2B (Coordinator)             │
 │  • MQTT Broker (Mosquitto)                   │
-│  • Python Client (Task Dispatcher)           │
-│  • Result Aggregator                         │
+│  • Task Dispatcher                           │
+│  • Workload Manager                          │
 └────────────────┬─────────────────────────────┘
                  │
             WiFi Network
@@ -61,11 +76,15 @@ Use the **Broccoli framework** for parallel processing tasks:
     │            │           │         │
 ┌───▼───┐   ┌───▼───┐   ┌───▼───┐   ...
 │ESP32-1│   │ESP32-2│   │ESP32-9│
+│ Task  │   │ Task  │   │ Task  │
 │Worker │   │Worker │   │Worker │
 └───────┘   └───────┘   └───────┘
 
 Each ESP32: Dual-core @ 240MHz, 520KB RAM
 Total: 18 cores, ~4.6MB RAM, ~1800 MIPS
+
+Runs MicroPython + Broccoli framework
+Can execute ANY task you deploy!
 ```
 
 ## Features
@@ -78,63 +97,76 @@ Total: 18 cores, ~4.6MB RAM, ~1800 MIPS
 - **Map/Starmap** - Apply functions to lists
 - **Chunks** - Batch processing of large datasets
 
-### Capabilities
+### Cluster Management
 
-- **Distributed Computing** - Spread work across 9 nodes
 - **Dynamic Code Deployment** - Upload new tasks wirelessly
 - **Symmetric Architecture** - Every ESP32 is identical
 - **Auto-Discovery** - Nodes auto-connect to cluster
 - **Fault Tolerance** - Tasks retry on failure
+- **Task Switching** - Change workloads without re-flashing
+- **Mixed Workloads** - Run different tasks on different nodes
 
 ## Quick Start
 
-### Option A: DuinoCoin Mining (Recommended) ⛏️
-
-```bash
-# 1. Create account at https://wallet.duinocoin.com
-
-# 2. Run setup
-cd duinocoin/scripts
-./setup_duinocoin.sh
-
-# 3. Configure
-nano ../config/miner_configs.json  # Add your username & WiFi
-
-# 4. Generate configs
-python3 flash_helper.py
-
-# 5. Flash ESP32s with Arduino IDE
-# (See duinocoin/QUICKSTART_DUINOCOIN.md)
-
-# 6. Monitor
-python3 ../monitor/web_dashboard.py  # Access at http://K2B_IP:5000
-```
-
-**→ Full guide:** [duinocoin/QUICKSTART_DUINOCOIN.md](duinocoin/QUICKSTART_DUINOCOIN.md)
-
-### Option B: Distributed Computing 💻
+### Setup: Build the Compute Cluster 💻
 
 ```bash
 # 1. Configure WiFi and MQTT
 nano config/config_wifi_params.py
 nano config/config_mqtt_params.py
 
-# 2. Setup K2B as master
+# 2. Setup K2B as coordinator
 cd deployment
 ./setup_k2b_master.sh
 
-# 3. Flash MicroPython to ESP32s
+# 3. Flash MicroPython to all 9 ESP32s
 ./flash_esp32_nodes.sh
 
-# 4. Deploy Broccoli code
+# 4. Deploy Broccoli cluster framework
 ./deploy_broccoli.sh
 
-# 5. Test cluster
+# 5. Test cluster with distributed computing
 cd ../examples
 python3 test_cluster.py
 ```
 
 **→ Full guide:** [QUICKSTART.md](QUICKSTART.md)
+
+### Usage: Run Tasks on Your Cluster
+
+**Distributed Computing:**
+```bash
+cd examples
+python3 test_cluster.py  # Run test suite
+```
+
+**DuinoCoin Mining (as a task):**
+```bash
+cd examples
+python3 cluster_coordinator.py \
+    --mode mine \
+    --username YOUR_DUCO_USERNAME \
+    --duration 60
+```
+
+**Mixed Workload:**
+```python
+from cluster_coordinator import ClusterCoordinator
+
+coord = ClusterCoordinator("your_username")
+coord.start_cluster()
+
+# Deploy both computing and mining tasks
+coord.deploy_tasks(['cluster_tasks.py', 'duinocoin_task.py'])
+
+# Mine for 30 minutes
+coord.mine_duinocoin(duration_minutes=30)
+
+# Run computation
+coord.run_computation('monte_carlo_pi', iterations=100000)
+```
+
+**→ Full usage guide:** [CLUSTER_USAGE.md](CLUSTER_USAGE.md)
 
 ## Example: Monte Carlo Pi Estimation
 
@@ -154,21 +186,14 @@ print(f"Pi ≈ {pi_estimate}")
 # Pi ≈ 3.14159 (computed across 9 ESP32s in parallel!)
 ```
 
-## Example: Distributed Prime Counting
+## Example: DuinoCoin Mining
 
-```python
-from canvas import group
-import cluster_tasks as tasks
+```bash
+# Mine for 1 hour
+python3 cluster_coordinator.py --mode mine --username myusername --duration 60
 
-# Count primes from 1 to 100,000 across cluster
-chunk_size = 100000 // 9
-gp = group([
-    tasks.count_primes_in_range.s(i*chunk_size + 1, (i+1)*chunk_size)
-    for i in range(9)
-])
-
-total_primes = sum(gp.get())
-print(f"Found {total_primes} primes")
+# Mine specific number of shares
+python3 cluster_coordinator.py --mode mine --username myusername --shares 100
 ```
 
 ## Example: MapReduce Word Count
@@ -189,27 +214,37 @@ word_counts = result.get()
 
 ## What Can You Do?
 
-### DuinoCoin Mining ⛏️
-- **Mine DUCO cryptocurrency** (~90 DUCO/day with 9 ESP32s)
-- **Low power consumption** (~13.5W total)
-- **Eco-friendly** compared to traditional crypto mining
-- **Educational** - Learn about cryptocurrency and mining
-- **Actually earns tokens** - Not just theoretical
+### Distributed Computing (Primary Use) 💻
+- **Monte Carlo Simulations** - Run millions of iterations in parallel
+- **MapReduce Operations** - Process large datasets across nodes
+- **Prime Searching** - Distributed number crunching
+- **Parameter Sweeps** - Test many parameter combinations
+- **Genetic Algorithms** - Parallel evolution of solutions
+- **Distributed Sensors** - IoT data aggregation
+- **Password Cracking** - Educational/authorized testing
+- **Custom Algorithms** - Deploy your own Python tasks wirelessly
 
-### Distributed Computing 💻
-- **Monte Carlo Simulations** (embarrassingly parallel)
-- **Parameter Sweeps** (try many combinations)
-- **Distributed Sensors** (IoT data aggregation)
-- **Prime Searching** (distributed number theory)
-- **Password Cracking** (educational/authorized only!)
-- **Genetic Algorithms** (parallel evolution)
-- **MapReduce Operations** (word count, data analysis)
+### Optional: DuinoCoin Mining ⛏️
+- **Mine as a cluster task** (~30-50 DUCO/day with flexible MicroPython setup)
+- **OR use dedicated miners** (~90 DUCO/day with Arduino C++ setup)
+- **Switch between mining and computing** on demand
+- **Mine when idle** - Use cluster downtime productively
+- **Educational** - Learn about cryptocurrency mining
+- **Low power** - ~13.5W total
+
+### Flexibility is Key 🔄
+- **Switch tasks dynamically** - No re-flashing needed
+- **Deploy code wirelessly** - Update tasks over WiFi
+- **Mixed workloads** - Some nodes mine, others compute
+- **Scheduler support** - Mine at night, compute during day
+- **Resource allocation** - Assign nodes to different tasks
 
 ### Not Ideal For:
+- Traditional cryptocurrency mining (Bitcoin/Ethereum)
 - Single-threaded CPU-intensive tasks
 - Large memory operations (520KB per node)
-- Traditional cryptocurrency mining (Bitcoin/Ethereum)
 - Real-time control (network latency)
+- Maximum DuinoCoin hashrate (use dedicated miners for that)
 
 ## Performance
 
@@ -234,57 +269,62 @@ word_counts = result.get()
 ```
 esp-cluster/
 ├── README.md              # This file
+├── CLUSTER_USAGE.md       # ⭐ How to use your cluster (READ THIS!)
 │
-├── duinocoin/             # 🪙 DuinoCoin Mining (Primary Use)
-│   ├── README.md                  # DuinoCoin overview
-│   ├── QUICKSTART_DUINOCOIN.md    # Quick start guide
-│   ├── DUINOCOIN_SETUP.md         # Detailed setup guide
-│   ├── config/                    # Mining configuration
-│   │   ├── miner_configs.json    # Cluster configuration
-│   │   └── settings_template.h   # ESP32 Settings.h template
-│   ├── scripts/                   # Setup & deployment
-│   │   ├── setup_duinocoin.sh    # Install Arduino IDE, etc.
-│   │   └── flash_helper.py       # Auto-generate configs
-│   └── monitor/                   # Monitoring tools
-│       ├── cluster_monitor.py    # Terminal monitor
-│       └── web_dashboard.py      # Web dashboard
+├── QUICKSTART.md          # Setup guide (~1 hour)
+├── SETUP_GUIDE.md         # Detailed architecture
 │
-├── QUICKSTART.md          # Distributed computing quick start
-├── SETUP_GUIDE.md         # Distributed computing detailed guide
-│
-├── config/                # Distributed computing config
+├── config/                # Configuration files
 │   ├── config_wifi_params.py      # WiFi credentials
 │   └── config_mqtt_params.py      # MQTT broker settings
 │
-├── deployment/            # Distributed computing deployment
-│   ├── setup_k2b_master.sh        # Setup K2B master node
+├── deployment/            # Setup and deployment scripts
+│   ├── setup_k2b_master.sh        # Setup K2B coordinator
 │   ├── flash_esp32_nodes.sh       # Flash MicroPython
 │   ├── deploy_broccoli.sh         # Deploy cluster code
 │   └── node_config.py             # Node definitions
 │
+├── examples/              # Task examples and coordinator
+│   ├── README.md          # Examples documentation
+│   ├── cluster_tasks.py   # Distributed computing tasks
+│   ├── test_cluster.py    # Test suite
+│   ├── duinocoin_task.py  # ⛏️ DuinoCoin mining as a task
+│   └── cluster_coordinator.py  # 🎯 Task coordinator
+│
 ├── codes/broccoli/        # Broccoli framework (original)
-│   ├── client/            # Client code for master
+│   ├── client/            # Client code for coordinator
 │   ├── node/              # Node/worker code
 │   ├── micropython/       # ESP32 MicroPython code
 │   └── config/            # Framework configuration
 │
-└── examples/              # Distributed computing examples
-    ├── README.md          # Examples documentation
-    ├── cluster_tasks.py   # Task definitions
-    └── test_cluster.py    # Comprehensive test suite
+└── duinocoin/             # 📁 Dedicated mining setup (alternative)
+    ├── README.md                  # DuinoCoin overview
+    ├── QUICKSTART_DUINOCOIN.md    # Dedicated miners guide
+    ├── DUINOCOIN_SETUP.md         # Complete mining setup
+    ├── config/                    # Mining configuration
+    ├── scripts/                   # Setup & deployment
+    └── monitor/                   # Monitoring tools
 ```
 
 ## Documentation
 
-### DuinoCoin Mining (Recommended)
-- **[duinocoin/QUICKSTART_DUINOCOIN.md](duinocoin/QUICKSTART_DUINOCOIN.md)** - Start mining in ~2 hours
-- **[duinocoin/DUINOCOIN_SETUP.md](duinocoin/DUINOCOIN_SETUP.md)** - Complete mining setup guide
+### Getting Started
+- **[QUICKSTART.md](QUICKSTART.md)** - Set up your cluster (~1 hour)
+- **[CLUSTER_USAGE.md](CLUSTER_USAGE.md)** - How to use your cluster ⭐ (READ THIS!)
+- **[SETUP_GUIDE.md](SETUP_GUIDE.md)** - Detailed architecture guide
+
+### Using the Cluster
+- **[examples/README.md](examples/README.md)** - Distributed computing examples
+- **[examples/cluster_coordinator.py](examples/cluster_coordinator.py)** - Task coordinator
+- **[examples/duinocoin_task.py](examples/duinocoin_task.py)** - Mining as a task
+
+### Dedicated DuinoCoin Mining (Alternative)
+If you want maximum mining performance (not flexibility):
+- **[duinocoin/QUICKSTART_DUINOCOIN.md](duinocoin/QUICKSTART_DUINOCOIN.md)** - Dedicated miners setup
+- **[duinocoin/DUINOCOIN_SETUP.md](duinocoin/DUINOCOIN_SETUP.md)** - Complete mining guide
 - **[duinocoin/README.md](duinocoin/README.md)** - DuinoCoin overview
 
-### Distributed Computing
-- **[QUICKSTART.md](QUICKSTART.md)** - Distributed computing quick start
-- **[SETUP_GUIDE.md](SETUP_GUIDE.md)** - Architecture and detailed setup
-- **[examples/README.md](examples/README.md)** - Task examples and patterns
+**Note:** Dedicated mining sacrifices cluster flexibility for ~3x better hashrate.
 
 ## Hardware Requirements
 
@@ -294,7 +334,7 @@ esp-cluster/
 - **USB:** USB-C with CP2102 chip
 - **Specs:** Dual-core @ 240MHz, 520KB SRAM, WiFi + Bluetooth
 
-### Master Node (1x)
+### Coordinator Node (1x)
 - **Board:** KickPi K2B (or any Linux SBC)
 - **OS:** Linux (Ubuntu/Debian recommended)
 - **Network:** WiFi or Ethernet
@@ -320,6 +360,7 @@ Broccoli provides the distributed task queue system that makes this cluster poss
 - [Celery On Docker Swarm](https://github.com/Wei1234c/CeleryOnDockerSwarm)
 - [IoT as Brain](https://github.com/Wei1234c/IOTasBrain)
 - [Elastic Network of Things with MQTT and MicroPython](https://github.com/Wei1234c/Elastic_Network_of_Things_with_MQTT_and_MicroPython)
+- [DuinoCoin](https://duinocoin.com) - Cryptocurrency for microcontrollers
 
 ## License
 
@@ -348,12 +389,12 @@ Feel free to:
 - Check connectivity: `mosquitto_sub -h localhost -t "cluster/#"`
 - Verify ESP32s can reach K2B IP
 
-### Slow performance
-- Normal! WiFi latency is inherent
-- Best for CPU-bound, embarrassingly parallel problems
-- Reduce network overhead by batching operations
+### Mining performance lower than expected
+- **Normal for MicroPython!** (~50-70 kH/s vs 170-180 kH/s for Arduino C++)
+- This is the trade-off for flexibility
+- Use dedicated miners if you want maximum hashrate
 
-See [SETUP_GUIDE.md](SETUP_GUIDE.md) for more troubleshooting.
+See [SETUP_GUIDE.md](SETUP_GUIDE.md) and [CLUSTER_USAGE.md](CLUSTER_USAGE.md) for more troubleshooting.
 
 ## Fun Facts
 
@@ -363,30 +404,32 @@ See [SETUP_GUIDE.md](SETUP_GUIDE.md) for more troubleshooting.
 - **Boot time:** ~3 seconds per node
 - **WiFi range:** Can span entire building
 - **Scalability:** Add more nodes by flashing and powering on
+- **Flexibility:** Switch from mining to computing in seconds!
 
 ## Why Build This?
 
-Because it's **stupid but fun**!
-
-This project demonstrates:
+Because it's a **flexible compute platform** that teaches you:
 - Distributed systems concepts
 - Message-passing architectures
 - Parallel computing patterns
 - IoT at scale
+- Task scheduling and coordination
+- Cryptocurrency mining (optionally!)
 - That you don't need expensive hardware to learn cluster computing
 
-Plus, you get to say "I have a 9-node distributed computing cluster" at parties. 🎉
+Plus, you get to say "I have a 9-node distributed computing cluster that can also mine crypto" at parties. 🎉
 
 ## Next Steps
 
 1. **Get Started:** Follow [QUICKSTART.md](QUICKSTART.md)
-2. **Learn Patterns:** Read [examples/README.md](examples/README.md)
-3. **Build Something:** Create your own distributed algorithm
-4. **Scale Up:** Add more ESP32 nodes!
-5. **Share:** Show off your cluster to the world
+2. **Learn Usage:** Read [CLUSTER_USAGE.md](CLUSTER_USAGE.md)
+3. **Run Examples:** Try [examples/test_cluster.py](examples/test_cluster.py)
+4. **Try Mining:** Use [examples/cluster_coordinator.py](examples/cluster_coordinator.py)
+5. **Build Something:** Create your own distributed algorithm
+6. **Scale Up:** Add more ESP32 nodes!
 
 Happy clustering! 🚀
 
 ---
 
-**Note:** This is an educational/experimental project. For production distributed computing, consider mature solutions like Dask, Ray, or Apache Spark.
+**Note:** This is a flexible educational/experimental compute cluster. For production distributed computing, consider mature solutions like Dask, Ray, or Apache Spark. For dedicated cryptocurrency mining, use specialized hardware or the dedicated Arduino setup in `duinocoin/`.
